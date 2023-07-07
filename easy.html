@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>在线简历编辑器</title>
+    <style>
+        /* 界面样式 */
+        
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .editor,
+        .preview {
+            width: 45%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="editor">
+            <h2>编辑</h2>
+            <form id="resumeForm">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" /><br />
+
+                <label for="email">邮箱：</label>
+                <input type="email" id="email" name="email" /><br />
+
+                <label for="education">教育经历：</label>
+                <textarea id="education" name="education" rows="4"></textarea><br />
+
+                <!-- 其他字段 -->
+                <button type="button" onclick="generatePDF()">生成PDF</button>
+            </form>
+        </div>
+
+        <div class="preview">
+            <h2>预览</h2>
+            <div id="resumePreview"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.3/jspdf.umd.min.js"></script>
+    <script>
+        // 获取表单元素和预览区域
+        const form = document.getElementById('resumeForm');
+        const preview = document.getElementById('resumePreview');
+
+        // 监听表单变化事件
+        form.addEventListener('input', updatePreview);
+
+        // 更新预览区域
+        function updatePreview() {
+            // 构建简历对象
+            const resume = {
+                name: form.name.value,
+                email: form.email.value,
+                education: form.education.value,
+                // 其他字段
+            };
+
+            // 渲染简历预览
+            preview.innerHTML = `
+        <p>姓名：${resume.name}</p>
+        <p>邮箱：${resume.email}</p>
+        <p>教育经历：${resume.education}</p>
+        <!-- 其他字段 -->
+      `;
+        }
+
+        // 生成PDF
+        function generatePDF() {
+            // 创建PDF实例
+            const pdf = new jsPDF();
+
+            // 获取预览内容
+            const previewContent = preview.innerHTML;
+
+            // 将预览内容添加到PDF
+            pdf.html(previewContent, {
+                callback: function(pdf) {
+                    // 保存PDF文件
+                    pdf.save('resume.pdf');
+                },
+            });
+        }
+    </script>
+</body>
+
+</html>
